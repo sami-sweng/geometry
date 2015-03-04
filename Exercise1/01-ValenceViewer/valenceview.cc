@@ -35,7 +35,6 @@
 #include "ValenceViewer.hh"
 
 
-
 int main(int argc, char **argv)
 {
   glutInit(&argc, argv);
