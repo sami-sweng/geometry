@@ -206,7 +206,8 @@ color_coding()
     for(unsigned int i = min_valence; i < max_valence; i++)
     {
         pc = ((float)i - (float)min_valence)/((float)max_valence - (float)min_valence);
-        //we compensate for one vertice which valence is 22 (most of them are in the range 3-11)
+        //we compensate for one vertice which valence is 22
+        //(in the bunny model most of them are in the range 3-11)
         pc = pc*2.5f;
         hue = 0.7f * pc;
         listOfColors[i]=hslToRGB(hue,saturation,lightness);
