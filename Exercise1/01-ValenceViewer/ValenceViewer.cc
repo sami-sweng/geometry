@@ -46,6 +46,8 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <stdio.h>
+#include <cmath>
 
 using namespace std;
 
@@ -188,34 +190,19 @@ color_coding()
     // each vertex of "mesh_". Store the color of each vertex using the method
     // set_color(Vertex, Color)
 
-    // Implement something here
-    //Color listOfColors[12]={
-    //    Color(1.0f),
-    //    Color(1.0f),
-    //    Color(1.0f),
-    //    Color(1.0f,0.0f,0.0f),
-    //    Color(1.0f,0.5249999999999999f,0.0f),
-    //    Color(0.95f,1.0f,0.0f),
-    //    Color(0.4250000000000005f,1.0f,0.0f),
-    //    Color(0.0f,1.0f,0.09999999999999998f),
-    //    Color(0.0f,1.0f,0.6250000000000001f),
-    //    Color(0.0f,0.8500000000000003f,1.0f),
-    //    Color(0.0f,0.3250000000000002f,1.0f),
-    //    Color(0.1999999999999993f,0.0f,1.0f)
-    //};
+    Color *listOfColors = new Color[max_valence];
 
-    Color *listOfColors = new Color[max_valence+1];
-
-    float hue, saturation, lightness;
+    float hue, saturation, lightness, pc;
     saturation=1.0f;
     lightness=0.5f;
 
-
     //we work with the HUE color system 
-    for(unsigned int i = min_valence; i < max_valence+1; i++)
+    for(unsigned int i = min_valence; i < max_valence; i++)
     {
-        hue = 0.7f * ((float)i - (float)min_valence)/((float)max_valence - (float)min_valence);
-        listOfColors[i-2]=hslToRGB(hue,saturation,lightness);
+        pc = ((float)i - (float)min_valence)/((float)max_valence - (float)min_valence);
+        pc = pc*2.5f;
+        hue = 0.7f * pc;
+        listOfColors[i]=hslToRGB(hue,saturation,lightness);
     }
 
 
