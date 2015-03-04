@@ -44,11 +44,15 @@
 #include "ValenceViewer.hh"
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
+using namespace std;
 
 
 //== IMPLEMENTATION ========================================================== 
 
+//global variable that stores the maximal value of vertex valence
+unsigned int max_valence;
 
 ValenceViewer::
 ValenceViewer(const char* _title, int _width, int _height)
@@ -56,6 +60,7 @@ ValenceViewer(const char* _title, int _width, int _height)
 { 
   add_draw_mode("Vertex Valences");
 }
+
 
 
 //-----------------------------------------------------------------------------
@@ -106,6 +111,7 @@ calc_valences()
     v_begin = mesh_.vertices_begin();
     v_end = mesh_.vertices_end();
 
+    max_valence = 0;
     //iterate through all the vertices of the mesh
     for( v_it = v_begin ; v_it != v_end; ++ v_it ){
         Mesh::Vertex v = *v_it;
@@ -121,6 +127,13 @@ calc_valences()
         }
         while(++vc != vc_end);
 
+        //if the current number of incident vertices is greater than
+        //the current known maximal valence, we set the max_valence to be
+        //nn_incident_vertices 
+        if (nb_incident_vertices > max_valence)
+            max_valence = nb_incident_vertices;
+
+        //storing the number of incident vertices for the current vertex v 
         vvalence_[v]=nb_incident_vertices;
     }
 
@@ -141,20 +154,38 @@ color_coding()
     // set_color(Vertex, Color)
 
     // Implement something here
-    Color listOfColor[12]={
-        Color(1.0f),
-        Color(1.0f),
-        Color(1.0f),
-        Color(1.0f,0.0f,0.0f),
-        Color(1.0f,0.5249999999999999f,0.0f),
-        Color(0.95f,1.0f,0.0f),
-        Color(0.4250000000000005f,1.0f,0.0f),
-        Color(0.0f,1.0f,0.09999999999999998f),
-        Color(0.0f,1.0f,0.6250000000000001f),
-        Color(0.0f,0.8500000000000003f,1.0f),
-        Color(0.0f,0.3250000000000002f,1.0f),
-        Color(0.1999999999999993f,0.0f,1.0f)
-    };
+    //Color listOfColors[12]={
+    //    Color(1.0f),
+    //    Color(1.0f),
+    //    Color(1.0f),
+    //    Color(1.0f,0.0f,0.0f),
+    //    Color(1.0f,0.5249999999999999f,0.0f),
+    //    Color(0.95f,1.0f,0.0f),
+    //    Color(0.4250000000000005f,1.0f,0.0f),
+    //    Color(0.0f,1.0f,0.09999999999999998f),
+    //    Color(0.0f,1.0f,0.6250000000000001f),
+    //    Color(0.0f,0.8500000000000003f,1.0f),
+    //    Color(0.0f,0.3250000000000002f,1.0f),
+    //    Color(0.1999999999999993f,0.0f,1.0f)
+    //};
+
+    Color *listOfColors = new Color[max_valence];
+
+    float hue, saturation, lightness;
+
+    int color_index=0;
+    //interval [0.0-0.7] for hue is splited in max_valence parts
+    float part = 0.7 / max_valence;
+
+    //we work with the HUE color system 
+    for(float i = 0; i < 0.7; i += part)
+    {
+        hue = i;
+        saturation = (90 + rand() * 10)/100;
+        lightness = (50 + rand() * 10)/100;
+        listOfColors[color_index]=Color(hue,saturation,lightness);
+        color_index++;    
+    }
 
 
     Mesh::Vertex_iterator v_it, v_begin, v_end;
@@ -168,10 +199,10 @@ color_coding()
 
         unsigned int nb_incident_vertices=vvalence_[v];
 
-        set_color(v,listOfColor[nb_incident_vertices]);
-
+        set_color(v,listOfColors[nb_incident_vertices]);
 
     }
+
 
     /////////////////////////////////////////////////////////////////////////////
 }
