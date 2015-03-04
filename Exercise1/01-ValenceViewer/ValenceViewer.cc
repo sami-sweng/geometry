@@ -45,6 +45,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
@@ -53,6 +54,7 @@ using namespace std;
 
 //global variable that stores the maximal value of vertex valence
 unsigned int max_valence;
+unsigned int min_valence;
 
 ValenceViewer::
 ValenceViewer(const char* _title, int _width, int _height)
@@ -112,6 +114,7 @@ calc_valences()
     v_end = mesh_.vertices_end();
 
     max_valence = 0;
+    min_valence = std::numeric_limits<unsigned int>::max();
     //iterate through all the vertices of the mesh
     for( v_it = v_begin ; v_it != v_end; ++ v_it ){
         Mesh::Vertex v = *v_it;
@@ -132,6 +135,8 @@ calc_valences()
         //nn_incident_vertices 
         if (nb_incident_vertices > max_valence)
             max_valence = nb_incident_vertices;
+        if (nb_incident_vertices < min_valence)
+            min_valence = nb_incident_vertices;
 
         //storing the number of incident vertices for the current vertex v 
         vvalence_[v]=nb_incident_vertices;
@@ -143,6 +148,36 @@ calc_valences()
 
 //-----------------------------------------------------------------------------
 
+
+float
+hue2rgb(float p, float q, float t)
+{
+    if(t < 0.0f) t += 1.0f;
+    if(t > 1.0f) t -= 1.0f;
+    if(t < 1.0f/6.0f) return p + (q - p) * 6.0f * t;
+    if(t < 1.0f/2.0f) return q;
+    if(t < 2.0f/3.0f) return p + (q - p) * (2.0f/3.0f - t) * 6.0f;
+    return p;
+}
+
+Color
+hslToRGB(float h, float s, float l)
+{
+    float r, g, b;
+
+    if(s == 0.0f){
+        r = g = b = l; // achromatic
+    }
+    else{
+        float q = l < 0.5f ? l * (1.0f + s) : l + s - l * s;
+        float p = 2.0f * l - q;
+        r = hue2rgb(p, q, h + 1.0f/3.0f);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1.0f/3.0f);
+    }
+
+    return Color(r,g,b);
+}
 
 void 
 ValenceViewer::
@@ -169,22 +204,18 @@ color_coding()
     //    Color(0.1999999999999993f,0.0f,1.0f)
     //};
 
-    Color *listOfColors = new Color[max_valence];
+    Color *listOfColors = new Color[max_valence+1];
 
     float hue, saturation, lightness;
+    saturation=1.0f;
+    lightness=0.5f;
 
-    int color_index=0;
-    //interval [0.0-0.7] for hue is splited in max_valence parts
-    float part = 0.7 / max_valence;
 
     //we work with the HUE color system 
-    for(float i = 0; i < 0.7; i += part)
+    for(unsigned int i = min_valence; i < max_valence+1; i++)
     {
-        hue = i;
-        saturation = (90 + rand() * 10)/100;
-        lightness = (50 + rand() * 10)/100;
-        listOfColors[color_index]=Color(hue,saturation,lightness);
-        color_index++;    
+        hue = 0.7f * ((float)i - (float)min_valence)/((float)max_valence - (float)min_valence);
+        listOfColors[i-2]=hslToRGB(hue,saturation,lightness);
     }
 
 
@@ -202,6 +233,8 @@ color_coding()
         set_color(v,listOfColors[nb_incident_vertices]);
 
     }
+
+    delete listOfColors;
 
 
     /////////////////////////////////////////////////////////////////////////////
