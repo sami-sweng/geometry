@@ -145,32 +145,16 @@ color_coding()
         Color(1.0f),
         Color(1.0f),
         Color(1.0f),
-        Color(0.0f,0.0f,1.0f),
-        Color(0.0f,0.0f,1.0f),
-        Color(0.0f,1.0f,1.0f),
-        Color(0.0f,1.0f,0.0f),
-        Color(1.0f,1.0f,0.0f),
         Color(1.0f,0.0f,0.0f),
-        Color(1.0f,0.0f,0.0f),
-        Color(0.0f),
-        Color(0.0f)
+        Color(1.0f,0.5249999999999999f,0.0f),
+        Color(0.95f,1.0f,0.0f),
+        Color(0.4250000000000005f,1.0f,0.0f),
+        Color(0.0f,1.0f,0.09999999999999998f),
+        Color(0.0f,1.0f,0.6250000000000001f),
+        Color(0.0f,0.8500000000000003f,1.0f),
+        Color(0.0f,0.3250000000000002f,1.0f),
+        Color(0.1999999999999993f,0.0f,1.0f)
     };
-
-     //Just playing around with the palette
-    /*Color listOfColor[12]={
-        Color(1.0f),
-        Color(1.0f),
-        Color(1.0f),
-        Color(1.0f),
-        Color(230.0f/255.0f,232.0f/255.0f,189.0f/255.0f),
-        Color(223.0f/255.0f,76.0f/255.0f,77.0f/255.0f),
-        Color(103.0f/255.0f,197.0f/255.0f,95.0f/255.0f),
-        Color(242.0f/255.0f,87.0f/255.0f,88.0f/255.0f),
-        Color(173.0f/255.0f,103.0f/255.0f,76.0f/255.0f),
-        Color(0.0f),
-        Color(0.0f)
-    };*/
-
 
 
     Mesh::Vertex_iterator v_it, v_begin, v_end;
