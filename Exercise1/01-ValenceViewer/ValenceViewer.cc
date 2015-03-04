@@ -54,7 +54,7 @@ using namespace std;
 
 //== IMPLEMENTATION ========================================================== 
 
-//global variable that stores the maximal value of vertex valence
+//global variable that stores the maximal and min values of vertex valence
 unsigned int max_valence;
 unsigned int min_valence;
 
@@ -117,6 +117,7 @@ calc_valences()
 
     max_valence = 0;
     min_valence = std::numeric_limits<unsigned int>::max();
+
     //iterate through all the vertices of the mesh
     for( v_it = v_begin ; v_it != v_end; ++ v_it ){
         Mesh::Vertex v = *v_it;
@@ -134,7 +135,7 @@ calc_valences()
 
         //if the current number of incident vertices is greater than
         //the current known maximal valence, we set the max_valence to be
-        //nn_incident_vertices 
+        //nn_incident_vertices and conversely for min
         if (nb_incident_vertices > max_valence)
             max_valence = nb_incident_vertices;
         if (nb_incident_vertices < min_valence)
@@ -150,7 +151,9 @@ calc_valences()
 
 //-----------------------------------------------------------------------------
 
-
+//conversion function from HSL color model to RGB
+//JavaScript implementation found on http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+//ported by us to C++
 float
 hue2rgb(float p, float q, float t)
 {
@@ -168,7 +171,7 @@ hslToRGB(float h, float s, float l)
     float r, g, b;
 
     if(s == 0.0f){
-        r = g = b = l; // achromatic
+        r = g = b = l;
     }
     else{
         float q = l < 0.5f ? l * (1.0f + s) : l + s - l * s;
@@ -190,16 +193,20 @@ color_coding()
     // each vertex of "mesh_". Store the color of each vertex using the method
     // set_color(Vertex, Color)
 
+    //We will store a color for each used valence
     Color *listOfColors = new Color[max_valence];
 
     float hue, saturation, lightness, pc;
+
+    //we work with the HUE color system
+    //we map the min and max valence to hue from 0 to 0.7 (red to blue)
     saturation=1.0f;
     lightness=0.5f;
 
-    //we work with the HUE color system 
     for(unsigned int i = min_valence; i < max_valence; i++)
     {
         pc = ((float)i - (float)min_valence)/((float)max_valence - (float)min_valence);
+        //we compensate for one vertice which valence is 22 (most of them are in the range 3-11)
         pc = pc*2.5f;
         hue = 0.7f * pc;
         listOfColors[i]=hslToRGB(hue,saturation,lightness);
