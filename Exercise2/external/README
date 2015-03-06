@@ -1,0 +1,5 @@
+This is the folder for the source codes of external libraries, in particular boost and eigen.
+
+For boost, extract the 'boost' subfolder of the boost source code archive into this folder. Afterwards, you should be able to access the folder external/boost/graph, where external is the folder where this README file is located.
+
+For eigen, extract the source code into this folder, and rename the extracte folder as 'eigen'. You should find the file external/eigen/Eigen/Dense afterwards.
