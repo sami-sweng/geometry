@@ -84,10 +84,40 @@ compute_implicit_RBF()
     // INSERT CODE:
     // 1) Determine the RBF centers, and store them into the columns of matrix centers_;
     //    The offset distance should be determined according to the bounding box diaginal length.
+
+    // 1.1 calculating bounding box diagonal length
+    Eigen::Vector3d max_bounding_corner;
+    max_bounding_corner << points_.row(0).maxCoeff(), points_.row(1).maxCoeff(), points_.row(2).maxCoeff();
+    Eigen::Vector3d min_bounding_corner;
+    min_bounding_corner << points_.row(0).minCoeff(), points_.row(1).minCoeff(), points_.row(2).minCoeff();
+    float L=(max_bounding_corner-min_bounding_corner).norm();
+
+    // 1.2 setting epsilon value
+    float r=0.001f;
+    float epsilon=L*r;
+
+    // 1.3 defining the 2n RBF centers
+    for(int i = 0; i < n; ++ i)
+    {
+        centers_.col(i)=points_.col(i);
+        centers_.col(i+n)=points_.col(i)+epsilon*normals_.col(i);
+    }
+
     // 2) Collect the on- and off-surface constraints, to set up the linear system matrix M
     //    and the right-hand-side d.
+    for(int i = 0; i < N; ++ i)
+    {
+        for (int j=0; j<N; ++j){
+            M(i,j)=kernel(centers_.col(i),centers_.col(j));
+        }
+    }
+    for (int i=0; i<n; ++i){
+        d(i)=0.0f;
+        d(i+n)=epsilon;
+    }
     // 3) Use the memeber function solve_linear_system(...) to solve the linear system
     //    to obtain RBF weights, and store them in the data member weights_.
+    solve_linear_system(M,d,weights_);
 }
 
 
