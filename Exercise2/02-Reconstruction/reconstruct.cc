@@ -48,7 +48,7 @@
 #include <climits>
 #include <cmath>
 
-#define DISPLAY_HOPPE 0
+#define DISPLAY_HOPPE 1
 #define MC_RESOLUTION 51
 
 
