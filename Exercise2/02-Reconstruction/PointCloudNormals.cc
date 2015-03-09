@@ -104,9 +104,33 @@ void PointCloudNormals::compute_normals()
         // 1) Use the method knn_search(...) of the data member kd_tree_, to obtain the indices of
         //    n_neighbors_ + 1 points in the point cloud that are closest to the i-th point. Note that
         //    the i-th point is stored in the i-th column of the matrix data member points_.
+        std::vector<size_t> neighbors=kd_tree_->knn_search(points_.col(i), n_neighbors_+1);
+
         // 2) Using these closest point, set up the matrix M for estimating the normal at the i-th point.
+        // 2.1 calculate center point p
+        Eigen::Matrix3Xd p(3,1);
+        p.setZero();
+        for (std::vector<size_t>::iterator it = neighbors.begin() ; it != neighbors.end(); ++it){
+            p=p+points_.col(*it);
+        }
+        p=p/((float)n_neighbors_ + 1.0f);
+
+        //2.2 setting up matrix D, used to compute matrix M
+        Eigen::Matrix3Xd D(3, n_neighbors_+1);
+        D.setZero();
+        size_t col_it=0;
+        for (std::vector<size_t>::iterator it = neighbors.begin() ; it != neighbors.end(); ++it){
+            D.col(col_it)=points_.col(*it)-p;
+            col_it++;
+        }
+
+        //2.3 compute matrix M from matrix D
+        M=D*D.transpose();
+
         // 3) Call the member function smallest_eigenvector(...) to compute the normal vector
         //    from the matrix M, and store it into the i-th column of the matirx data member normals_
+        normals_.col(i)=smallest_eigenvector(M);
+
     }
 }
 

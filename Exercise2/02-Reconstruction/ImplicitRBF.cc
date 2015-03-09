@@ -115,6 +115,7 @@ compute_implicit_RBF()
         d(i)=0.0f;
         d(i+n)=epsilon;
     }
+
     // 3) Use the memeber function solve_linear_system(...) to solve the linear system
     //    to obtain RBF weights, and store them in the data member weights_.
     solve_linear_system(M,d,weights_);
