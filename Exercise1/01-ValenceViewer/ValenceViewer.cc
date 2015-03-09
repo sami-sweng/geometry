@@ -205,6 +205,7 @@ color_coding()
 
     for(unsigned int i = min_valence; i < max_valence; i++)
     {
+
         pc = ((float)i - (float)min_valence)/((float)max_valence - (float)min_valence);
         //we compensate for one vertice which valence is 22
         //(in the bunny model most of them are in the range 3-11)
@@ -213,6 +214,15 @@ color_coding()
         listOfColors[i]=hslToRGB(hue,saturation,lightness);
     }
 
+    //float red, green, blue;
+
+    //for(int i=0; i<max_valence; i+=1)
+    //{
+    //    red = (1.0 * i) / 100;
+    //    green = (1.0 * (100 - i)) / 100;
+    //    blue = (1.0 * (1000 - i)) / 100;
+    //    listOfColors[i] = Color(red, green, blue);
+   // }
 
     Mesh::Vertex_iterator v_it, v_begin, v_end;
 

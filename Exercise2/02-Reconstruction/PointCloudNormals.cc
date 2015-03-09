@@ -99,7 +99,35 @@ void PointCloudNormals::compute_normals()
     {
         // The 3x3 matrix used for determining the normal vector
         Eigen::Matrix3d M;
+        Eigen::MatrixXd D(3,n_neighbors_+1);
 
+        // calclutating n_neighbors_ nearest points for i-th point
+        std::vector<size_t> neighbour_indices = kd_tree_->knn_search(points_.col(i), n_neighbors_ + 1);
+
+        std::vector<double> mid_point(3,0);
+
+        for(int j = 0; j <= n_neighbors_; ++j)
+        {
+            mid_point[0] = mid_point[0] + points_(0,neighbour_indices[j]);
+            mid_point[1] = mid_point[1] + points_(1,neighbour_indices[j]);
+            mid_point[2] = mid_point[2] + points_(2,neighbour_indices[j]);
+            //mid_point = mid_point + points_.col(neighbour_indices[j]);
+        }
+        mid_point[0] = (1.0 /(n_neighbors_ + 1)) * mid_point[0];
+        mid_point[1] = (1.0 /(n_neighbors_ + 1)) * mid_point[1];
+        mid_point[2] = (1.0 /(n_neighbors_ + 1)) * mid_point[2];
+
+        for(int j = 0; j <= n_neighbors_; ++j)
+        {
+            D(0,j) = points_(0,neighbour_indices[j]) - mid_point[0];
+            D(1,j) = points_(1,neighbour_indices[j]) - mid_point[1];
+            D(2,j) = points_(2,neighbour_indices[j]) - mid_point[2];
+            //D.col(j) = points_.col(neighbour_indices[j]) - mid_point;
+        }
+
+        M = D * D.transpose();
+
+        normals_.col(i) = smallest_eigenvector(M);
         // INSERT CODE:
         // 1) Use the method knn_search(...) of the data member kd_tree_, to obtain the indices of
         //    n_neighbors_ + 1 points in the point cloud that are closest to the i-th point. Note that
