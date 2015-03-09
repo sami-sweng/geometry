@@ -104,25 +104,21 @@ void PointCloudNormals::compute_normals()
         // calclutating n_neighbors_ nearest points for i-th point
         std::vector<size_t> neighbour_indices = kd_tree_->knn_search(points_.col(i), n_neighbors_ + 1);
 
-        std::vector<double> mid_point(3,0);
+
+        Eigen::Vector3d mid_point;
+        mid_point.setZero();
 
         for(int j = 0; j <= n_neighbors_; ++j)
         {
-            mid_point[0] = mid_point[0] + points_(0,neighbour_indices[j]);
-            mid_point[1] = mid_point[1] + points_(1,neighbour_indices[j]);
-            mid_point[2] = mid_point[2] + points_(2,neighbour_indices[j]);
-            //mid_point = mid_point + points_.col(neighbour_indices[j]);
+            mid_point = mid_point + points_.col(neighbour_indices[j]);
         }
-        mid_point[0] = (1.0 /(n_neighbors_ + 1)) * mid_point[0];
-        mid_point[1] = (1.0 /(n_neighbors_ + 1)) * mid_point[1];
-        mid_point[2] = (1.0 /(n_neighbors_ + 1)) * mid_point[2];
+
+        mid_point = mid_point * (1.0/(n_neighbors_ + 1));
+
 
         for(int j = 0; j <= n_neighbors_; ++j)
         {
-            D(0,j) = points_(0,neighbour_indices[j]) - mid_point[0];
-            D(1,j) = points_(1,neighbour_indices[j]) - mid_point[1];
-            D(2,j) = points_(2,neighbour_indices[j]) - mid_point[2];
-            //D.col(j) = points_.col(neighbour_indices[j]) - mid_point;
+            D.col(j) = points_.col(neighbour_indices[j]) - mid_point;
         }
 
         M = D * D.transpose();
