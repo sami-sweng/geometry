@@ -233,7 +233,7 @@ calc_weights()
 
         }while(++vf_c != vf_end);
 
-         vweight_[*v_it] = area;
+         vweight_[*v_it] = 0.5 / area;
 	}
 }
 
