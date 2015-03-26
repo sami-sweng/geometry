@@ -327,7 +327,7 @@ SmoothingViewer::
 uniform_laplacian_enhance_feature()
 {
     Mesh::Vertex_iterator   v_it, v_end(mesh_.vertices_end());
-    Point old_mesh[mesh_.n_vertices()];
+    Point *old_mesh = new Point[mesh_.n_vertices()];
     int k=0;
 
     //copy the mesh
@@ -365,7 +365,7 @@ SmoothingViewer::
 laplace_beltrami_enhance_feature()
 {
     Mesh::Vertex_iterator   v_it, v_end(mesh_.vertices_end());
-    Point old_mesh[mesh_.n_vertices()];
+    Point *old_mesh = new Point[mesh_.n_vertices()];
     int k=0;
 
     //copy the mesh
